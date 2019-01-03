@@ -8,6 +8,7 @@ __register_apps__ = {}
 __controllers__ = []
 __pages__ = []
 __build_cached__ = None
+__controllert_url_build_cache__ = None
 from . controllers import Model
 def create(urls):
     """
@@ -27,13 +28,17 @@ def create(urls):
 
         if not __apps__.has_key(item.instance.app_name):
             import os
-            server_static_path = os.sep.join([
-                item.instance.app_dir,"static"
-            ])
-            urlpatterns+=(
-                url(r'^' + item.instance.host_dir + '/static/(?P<path>.*)$', django.views.static.serve,
-                    {'document_root': server_static_path, 'show_indexes': True}),
-            )
+            try:
+                if item.instance.app_dir != None:
+                    server_static_path = os.sep.join([
+                        item.instance.app_dir,"static"
+                    ])
+                    urlpatterns+=(
+                        url(r'^' + item.instance.host_dir + '/static/(?P<path>.*)$', django.views.static.serve,
+                            {'document_root': server_static_path, 'show_indexes': True}),
+                    )
+            except Exception as ex:
+                raise ex
             __apps__.update({
                 item.instance.app_name:item.instance.app_name
             })
@@ -41,8 +46,8 @@ def create(urls):
             if item.url=="":
                 print item.instance.on_get.im_func.func_code.co_filename
                 urlpatterns +=(
-                    url(r"^"+item.instance.host_dir +"$",item.instance.__view_exec__),
-                    url(r"^"+item.instance.host_dir +"/$",item.instance.__view_exec__)
+                    url(r"^"+item.instance.host_dir + "$", item.instance.__view_exec__),
+                    url(r"^"+item.instance.host_dir + "/$", item.instance.__view_exec__)
                 )
             else:
                 urlpatterns += (
@@ -84,6 +89,9 @@ def load_apps(path_to_app_dir,urlpatterns=None):
     import sys
     import imp
     import xdj
+    global __controllert_url_build_cache__
+    if __controllert_url_build_cache__ == None:
+        __controllert_url_build_cache__ = {}
     sys.path.append(path_to_app_dir)
     apply_settings()
     def get_all_sub_dir():
@@ -159,20 +167,33 @@ def load_apps(path_to_app_dir,urlpatterns=None):
         sys.path.append(controller_dir)
         files = os.listdir(controller_dir)
         for file in files:
+
+            import inspect
             controller_file = os.sep.join([controller_dir,file])
-            m = imp.load_source("{0}.{1}".format(item,file.split('.')[0]),controller_file)
-            controller_instance=__controllers__[__controllers__.__len__()-1].instance
-            controller_instance.app_dir = os.sep.join([path_to_app_dir,item])
-            controller_instance.host_dir=app_settings.host_dir
-            controller_instance.app_name=app_settings.app_name
-            controller_instance.on_authenticate=app_settings.on_authenticate
-            controller_instance.rel_login_url = app_settings.rel_login_url
-            controller_instance.settings = app_settings
-            controller_instance.param_names = __controllers__[__controllers__.__len__()-1].params
+            if not __controllert_url_build_cache__.has_key(controller_file):
+                m = imp.load_source("{0}.{1}".format(item,file.split('.')[0]),controller_file)
+                controller_instance=__controllers__[__controllers__.__len__()-1].instance
+                if inspect.getfile(controller_instance.__class__) == controller_file:
+                    __controllers__[__controllers__.__len__() - 1].app_dir = os.sep.join([path_to_app_dir,item])
+                    controller_instance.app_dir = os.sep.join([path_to_app_dir,item])
+                    controller_instance.host_dir = app_settings.host_dir
+                    controller_instance.app_name = app_settings.app_name
+                    controller_instance.on_authenticate = app_settings.on_authenticate
+                    controller_instance.rel_login_url = app_settings.rel_login_url
+                    controller_instance.settings = app_settings
+                    controller_instance.param_names = __controllers__[__controllers__.__len__()-1].params
+                    print controller_instance.url
+                    print inspect.getfile(controller_instance.__class__)
 
-
-            from . controllers import Res
-            controller_instance.res= Res(app_settings.on_get_language_resource_item,controller_instance.app_name,controller_instance.template)
+                    from . controllers import Res
+                    controller_instance.res = Res(app_settings.on_get_language_resource_item,controller_instance.app_name,controller_instance.template)
+                else:
+                    print "uncontroller file {0}".format(
+                        controller_file
+                    )
+                __controllert_url_build_cache__.update({
+                    controller_file:controller_instance
+                })
 
             """
             # self.controllerClass()
