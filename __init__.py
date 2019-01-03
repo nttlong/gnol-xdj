@@ -89,7 +89,14 @@ def register_INSTALLED_APPS():
 def load_apps(path_to_app_dir,urlpatterns=None):
     from django.conf import settings
     if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
-        raise Exception("it look like you forgot call xdj.register_INSTALLED_APPS() at manage.py before startup.run()")
+        raise Exception("it look like you forgot call xdj.register_INSTALLED_APPS() at manage.py before startup.run()\n"
+                        "How to use xdj?\n"
+                        "At before startup.run() put follow code:\n"
+                        "import sys\n"
+                        "sys.path.append(path to parent of xdj package)\n"
+                        "import xdj"
+                        "xdj.register_INSTALLED_APPS()\n"
+                        "")
 
     if urlpatterns==None:
         urlpatterns=()
