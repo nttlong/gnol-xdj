@@ -85,13 +85,14 @@ from .page import Page
 def register_INSTALLED_APPS():
     from django.conf import settings
     settings.INSTALLED_APPS.append("xdj_models.models")
+    load_config()
 
 def load_apps(path_to_app_dir,urlpatterns=None):
     from django.conf import settings
     if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
         raise Exception("it look like you forgot call xdj.register_INSTALLED_APPS() at manage.py before startup.run()\n"
                         "How to use xdj?\n"
-                        "At before startup.run() put follow code:\n"
+                        "At before startup.run() for dev mode or for deploy mode bottom of '{edx source}/apps/edx/edx-platform/lms/envs/bitnami.py' put follow code:\n"
                         "import sys\n"
                         "sys.path.append(path to parent of xdj package)\n"
                         "import xdj"
@@ -259,4 +260,61 @@ def apply_settings():
     """For large courses this slows down courseware access for staff."""
     setattr(settings,"MILESTONES_APP",True)
 
+def load_config():
+    import json
+    import os
+    import sys
+    filet_of_data_config = os.sep.join([os.path.dirname(__file__),"config","data.json"])
+    with open( filet_of_data_config,'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        settings.DATABASES['default']['ENGINE'] = data["sql"]["engine"]
+        settings.DATABASES['default']['NAME'] = data["sql"]["name"]
+        settings.DATABASES['default']['PORT'] = data["sql"]["port"]
+        settings.DATABASES['default']['HOST'] = data["sql"]["host"]
+        settings.DATABASES['default']['USER'] = data["sql"]["user"]
+        settings.DATABASES['default']['PASSWORD'] = data["sql"]["password"]
 
+        settings.DATABASES["read_replica"]['ENGINE'] = data["sql"]["engine"]
+        settings.DATABASES["read_replica"]['NAME'] = data["sql"]["name"]
+        settings.DATABASES["read_replica"]['PORT'] = data["sql"]["port"]
+        settings.DATABASES["read_replica"]['HOST'] = data["sql"]["host"]
+        settings.DATABASES["read_replica"]['USER'] = data["sql"]["user"]
+        settings.DATABASES["read_replica"]['PASSWORD'] = data["sql"]["password"]
+
+        settings.DATABASES['student_module_history']['ENGINE'] = data["sql"]["engine"]
+        settings.DATABASES['student_module_history']['NAME'] = data["sql"]["name"]
+        settings.DATABASES['student_module_history']['PORT'] = data["sql"]["port"]
+        settings.DATABASES['student_module_history']['HOST'] = data["sql"]["host"]
+        settings.DATABASES['student_module_history']['USER'] = data["sql"]["user"]
+        settings.DATABASES['student_module_history']['PASSWORD'] = data["sql"]["password"]
+
+        settings.CONTENTSTORE["DOC_STORE_CONFIG"]["db"] = data["mongo"]["name"]
+        settings.CONTENTSTORE["DOC_STORE_CONFIG"]["host"] = data["mongo"]["host"]
+        settings.CONTENTSTORE["DOC_STORE_CONFIG"]["user"] = data["mongo"]["user"]
+        settings.CONTENTSTORE["DOC_STORE_CONFIG"]["password"] = data["mongo"]["password"]
+        settings.CONTENTSTORE["DOC_STORE_CONFIG"]["port"] = data["mongo"]["port"]
+
+        settings.CONTENTSTORE["OPTIONS"]["db"] = data["mongo"]["name"]
+        settings.CONTENTSTORE["OPTIONS"]["host"] = data["mongo"]["host"]
+        settings.CONTENTSTORE["OPTIONS"]["user"] = data["mongo"]["user"]
+        settings.CONTENTSTORE["OPTIONS"]["password"] = data["mongo"]["password"]
+        settings.CONTENTSTORE["OPTIONS"]["port"] = data["mongo"]["port"]
+
+        settings.DOC_STORE_CONFIG["db"] = data["mongo"]["name"]
+        settings.DOC_STORE_CONFIG["host"] = data["mongo"]["host"]
+        settings.DOC_STORE_CONFIG["user"] = data["mongo"]["user"]
+        settings.DOC_STORE_CONFIG["password"] = data["mongo"]["password"]
+        settings.DOC_STORE_CONFIG["port"] = data["mongo"]["port"]
+
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][0]["DOC_STORE_CONFIG"]["db"] = data["mongo"]["name"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][0]["DOC_STORE_CONFIG"]["host"] = data["mongo"]["host"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][0]["DOC_STORE_CONFIG"]["user"] = data["mongo"]["user"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][0]["DOC_STORE_CONFIG"]["password"] = data["mongo"]["password"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][0]["DOC_STORE_CONFIG"]["port"] = data["mongo"]["port"]
+
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["db"] = data["mongo"]["name"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["host"] = data["mongo"]["host"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["user"] = data["mongo"]["user"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["password"] = data["mongo"]["password"]
+        settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["port"] = data["mongo"]["port"]
