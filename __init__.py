@@ -82,7 +82,15 @@ def create(urls):
 from . controllers import BaseController,Controller
 from .page import Page
 
+def register_INSTALLED_APPS():
+    from django.conf import settings
+    settings.INSTALLED_APPS.append("xdj_models.models")
+
 def load_apps(path_to_app_dir,urlpatterns=None):
+    from django.conf import settings
+    if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
+        raise Exception("it look like you forgot call xdj.register_INSTALLED_APPS() at manage.py before startup.run()")
+
     if urlpatterns==None:
         urlpatterns=()
     import os
