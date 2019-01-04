@@ -1,0 +1,6 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+. /home/nttlong/code/edx/apps/edx/conf/edxapp_env
+cd /home/nttlong/code/edx/apps/edx/edx-platform
+python manage.py lms migrate --database default --noinput --settings=devstack
+python manage.py lms migrate --database student_module_history --noinput --settings=devstack

@@ -24,7 +24,11 @@ def create(urls):
 
     from django.conf.urls import url
     import django
+    replace_urls = []
     for item in __controllers__:
+
+        if item.instance.replace_url:
+            replace_urls.append(item.instance)
 
         if not __apps__.has_key(item.instance.app_name):
             import os
@@ -75,7 +79,18 @@ def create(urls):
         #     url(r'config/forums', ConfigurationModelCurrentAPIView.as_view(model=ForumsConfig)),
         # )
     if isinstance(urls,tuple):
-        urls+=urlpatterns
+        urls += urlpatterns
+    for item in replace_urls:
+        print "will replace with {0}".format(item.replace_url)
+        match_url = [x for x in urls if x.regex.pattern == item.replace_url]
+        if match_url.__len__() == 0:
+            print "{0} can not find replacer, will run under {1}".format(item.replace_url,item.url)
+        else:
+            import inspect
+            print "{0} can not find replacer, will run by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
+            match_url[0].callback = item.__view_exec__
+
+
     if isinstance(urls, list):
         urls.extend(list(urlpatterns))
     return urls
@@ -86,6 +101,10 @@ def register_INSTALLED_APPS():
     from django.conf import settings
     settings.INSTALLED_APPS.append("xdj_models.models")
     load_config()
+    load_settings()
+    load_email_settings()
+    load_feature_settings()
+    load_elastic_search_config()
 
 def load_apps(path_to_app_dir,urlpatterns=None):
     from django.conf import settings
@@ -186,10 +205,15 @@ def load_apps(path_to_app_dir,urlpatterns=None):
 
             import inspect
             controller_file = os.sep.join([controller_dir,file])
-            if not __controllert_url_build_cache__.has_key(controller_file):
+            extension = os.path.splitext(controller_file)[1][1:]
+            if (not __controllert_url_build_cache__.has_key(controller_file)) and extension=="py":
                 m = imp.load_source("{0}.{1}".format(item,file.split('.')[0]),controller_file)
                 controller_instance=__controllers__[__controllers__.__len__()-1].instance
-                if inspect.getfile(controller_instance.__class__) == controller_file:
+                class_file = inspect.getfile(controller_instance.__class__)
+                extension_class = os.path.splitext(class_file)[1][1:]
+                class_file = class_file[0:class_file.__len__() - extension_class.__len__()]
+                controller_file_class = controller_file[0:controller_file.__len__() - extension.__len__()]
+                if class_file == controller_file_class:
                     __controllers__[__controllers__.__len__() - 1].app_dir = os.sep.join([path_to_app_dir,item])
                     controller_instance.app_dir = os.sep.join([path_to_app_dir,item])
                     controller_instance.host_dir = app_settings.host_dir
@@ -318,3 +342,86 @@ def load_config():
         settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["user"] = data["mongo"]["user"]
         settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["password"] = data["mongo"]["password"]
         settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["port"] = data["mongo"]["port"]
+
+def load_settings():
+    import json
+    import os
+    import sys
+    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "settings.json"])
+    with open(filet_of_settings_config, 'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        for k,v in data.items():
+            setattr(settings,k,v)
+
+def load_email_settings():
+    import json
+    import os
+    import sys
+    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "email.json"])
+    with open(filet_of_settings_config, 'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        settings.EMAIL_HOST = data['host']
+        settings.EMAIL_HOST_USER = data['user']
+        settings.EMAIL_HOST_PASSWORD = data['password']
+        settings.EMAIL_USE_TLS = data["tsl"]
+        settings.EMAIL_PORT = data["port"]
+        settings.EMAIL_FILE_PATH = data["path"]
+        settings.SERVER_EMAIL = data["email"]
+        settings.DEFAULT_FROM_EMAIL =data["email"]
+        settings.CONTACT_EMAIL = data["contact_email"]
+        settings.API_ACCESS_FROM_EMAIL = data["email"]
+        settings.API_ACCESS_MANAGER_EMAIL = data["email"]
+        settings.BUGS_EMAIL = data["email"]
+        settings.BULK_EMAIL_DEFAULT_FROM_EMAIL = data["email"]
+        settings.FEEDBACK_SUBMISSION_EMAIL =data["email"]
+
+
+def load_forum_config():
+    import json
+    import os
+    import sys
+    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "forum.json"])
+    with open(filet_of_settings_config, 'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        """
+        "COMMENTS_SERVICE_KEY": "9198a36ca5349defcc6ecc1d3235390bd47a",
+        "COMMENTS_SERVICE_URL": "http://localhost:18080"
+        """
+        settings.COMMENTS_SERVICE_KEY = data['key']
+        settings.COMMENTS_SERVICE_URL = data['url']
+
+def load_feature_settings():
+    import json
+    import os
+    import sys
+    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "feature.json"])
+    with open(filet_of_settings_config, 'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        for k,v in data.items():
+            settings.FEATURES.update({
+                k:v
+            })
+
+def load_elastic_search_config():
+    import json
+    import os
+    import sys
+    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "elastic_search.json"])
+    with open(filet_of_settings_config, 'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        settings.ELASTIC_SEARCH_CONFIG=data
+
+
+
+
+
+
+
+
+
+

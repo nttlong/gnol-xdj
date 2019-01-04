@@ -216,6 +216,7 @@ class __controller_wrapper__(object):
         self.template=kwargs["template"]
         self.controllerClass=None
         self.params = kwargs.get("params",[])
+        self.replace_url = kwargs.get("replace_url",None)
 
     def wrapper(self,*args,**kwargs):
         import xdj
@@ -228,6 +229,7 @@ class __controller_wrapper__(object):
             self.instance.url=self.url
             self.instance.template = self.template
             self.instance.sub_pages = [v for k, v in self.controllerClass.__dict__.items() if hasattr(v, "is_sub_page")]
+            self.instance.replace_url = self.replace_url
             for item in self.instance.sub_pages:
                 item.owner=self.instance
                 class cls_exec_request(object):
@@ -255,7 +257,7 @@ def __createModelFromRequest__(request,rel_login_url,res,host_dir,on_authenticat
 
     model = Model();
     model.request = request
-    model.currentUrl = request.build_absolute_uri()
+    model.currentUrl = request.build_absolute_uri().split("?")[0]
     model.absUrl = model.currentUrl[0:model.currentUrl.__len__() - request.path.__len__()]
     model.appUrl = model.absUrl + "/" + host_dir
     model.static = model.appUrl + "/static"

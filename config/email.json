@@ -1,0 +1,12 @@
+{
+  "host": "webmail.lacviet.com.vn",
+  "password": "",
+  "user": "lvdomain\\requesthcs",
+  "password": "Lvsure!@#$",
+  "email": "requesthcs@lacviet.com.vn",
+  "port": 25,
+  "tsl": false,
+  "backend": "django.core.mail.backends.smtp.EmailBackend",
+  "path": "/home/nttlong/code/edx/apps/edx/edx-platform/email_tmp",
+  "contact_email": "nttlong@lacviet.com.vn"
+}
