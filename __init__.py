@@ -99,17 +99,21 @@ from .page import Page
 
 def register_INSTALLED_APPS():
     from django.conf import settings
-    settings.INSTALLED_APPS.append("xdj_models.models")
-    load_config()
-    load_settings()
-    load_email_settings()
-    load_feature_settings()
-    load_elastic_search_config()
+    if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
+        settings.INSTALLED_APPS.append("xdj_models.models")
+    try:
+        load_config()
+        load_settings()
+        load_email_settings()
+        load_feature_settings()
+        load_elastic_search_config()
+    except Exception as ex:
+        raise Exception(ex)
 
 def load_apps(path_to_app_dir,urlpatterns=None):
     from django.conf import settings
     if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
-        raise Exception("it look like you forgot call xdj.register_INSTALLED_APPS() at manage.py before startup.run()\n"
+        raise Exception("it look like you forgot call xdj.register_INSTALLED_APPS() at manage.py , cms/bitnami_wsgi.py or lms/bitnami_wsgi.py before startup.run()\n"
                         "How to use xdj?\n"
                         "At before startup.run() for dev mode or for deploy mode bottom of '{edx source}/apps/edx/edx-platform/lms/envs/bitnami.py' put follow code:\n"
                         "import sys\n"
@@ -207,33 +211,42 @@ def load_apps(path_to_app_dir,urlpatterns=None):
             controller_file = os.sep.join([controller_dir,file])
             extension = os.path.splitext(controller_file)[1][1:]
             if (not __controllert_url_build_cache__.has_key(controller_file)) and extension=="py":
-                m = imp.load_source("{0}.{1}".format(item,file.split('.')[0]),controller_file)
-                controller_instance=__controllers__[__controllers__.__len__()-1].instance
-                class_file = inspect.getfile(controller_instance.__class__)
-                extension_class = os.path.splitext(class_file)[1][1:]
-                class_file = class_file[0:class_file.__len__() - extension_class.__len__()]
-                controller_file_class = controller_file[0:controller_file.__len__() - extension.__len__()]
-                if class_file == controller_file_class:
-                    __controllers__[__controllers__.__len__() - 1].app_dir = os.sep.join([path_to_app_dir,item])
-                    controller_instance.app_dir = os.sep.join([path_to_app_dir,item])
-                    controller_instance.host_dir = app_settings.host_dir
-                    controller_instance.app_name = app_settings.app_name
-                    controller_instance.on_authenticate = app_settings.on_authenticate
-                    controller_instance.rel_login_url = app_settings.rel_login_url
-                    controller_instance.settings = app_settings
-                    controller_instance.param_names = __controllers__[__controllers__.__len__()-1].params
-                    print controller_instance.url
-                    print inspect.getfile(controller_instance.__class__)
+                m = None
+                try:
+                    m = imp.load_source("{0}.{1}".format(item,file.split('.')[0]),controller_file)
+                except SyntaxError as ex:
+                    raise ex
+                except Exception as ex:
+                    from xdj.errors import LoadControllerError
+                    raise LoadControllerError(ex.message,file,ex.args)
 
-                    from . controllers import Res
-                    controller_instance.res = Res(app_settings.on_get_language_resource_item,controller_instance.app_name,controller_instance.template)
-                else:
-                    print "uncontroller file {0}".format(
-                        controller_file
-                    )
-                __controllert_url_build_cache__.update({
-                    controller_file:controller_instance
-                })
+                if __controllers__.__len__()>0:
+                    controller_instance=__controllers__[__controllers__.__len__()-1].instance
+                    class_file = inspect.getfile(controller_instance.__class__)
+                    extension_class = os.path.splitext(class_file)[1][1:]
+                    class_file = class_file[0:class_file.__len__() - extension_class.__len__()]
+                    controller_file_class = controller_file[0:controller_file.__len__() - extension.__len__()]
+                    if class_file == controller_file_class:
+                        __controllers__[__controllers__.__len__() - 1].app_dir = os.sep.join([path_to_app_dir,item])
+                        controller_instance.app_dir = os.sep.join([path_to_app_dir,item])
+                        controller_instance.host_dir = app_settings.host_dir
+                        controller_instance.app_name = app_settings.app_name
+                        controller_instance.on_authenticate = app_settings.on_authenticate
+                        controller_instance.rel_login_url = app_settings.rel_login_url
+                        controller_instance.settings = app_settings
+                        controller_instance.param_names = __controllers__[__controllers__.__len__()-1].params
+                        print controller_instance.url
+                        print inspect.getfile(controller_instance.__class__)
+
+                        from . controllers import Res
+                        controller_instance.res = Res(app_settings.on_get_language_resource_item,controller_instance.app_name,controller_instance.template)
+                    else:
+                        print "uncontroller file {0}".format(
+                            controller_file
+                        )
+                    __controllert_url_build_cache__.update({
+                        controller_file:controller_instance
+                    })
 
             """
             # self.controllerClass()
@@ -242,7 +255,7 @@ def load_apps(path_to_app_dir,urlpatterns=None):
             if self.instance.app_dir==None:
                 raise Exception("{0} do not have 'app_dir'".format(self.controllerClass))
             """
-            x=1
+            # x=1
 
     return create(urlpatterns)
 
@@ -347,35 +360,46 @@ def load_settings():
     import json
     import os
     import sys
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info("load settings")
+
     filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "settings.json"])
     with open(filet_of_settings_config, 'r') as data_file:
         from django.conf import settings
         data = json.loads(data_file.read())
+        logger.info(data)
         for k,v in data.items():
             setattr(settings,k,v)
+    return  None
 
 def load_email_settings():
-    import json
-    import os
-    import sys
-    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "email.json"])
-    with open(filet_of_settings_config, 'r') as data_file:
-        from django.conf import settings
-        data = json.loads(data_file.read())
-        settings.EMAIL_HOST = data['host']
-        settings.EMAIL_HOST_USER = data['user']
-        settings.EMAIL_HOST_PASSWORD = data['password']
-        settings.EMAIL_USE_TLS = data["tsl"]
-        settings.EMAIL_PORT = data["port"]
-        settings.EMAIL_FILE_PATH = data["path"]
-        settings.SERVER_EMAIL = data["email"]
-        settings.DEFAULT_FROM_EMAIL =data["email"]
-        settings.CONTACT_EMAIL = data["contact_email"]
-        settings.API_ACCESS_FROM_EMAIL = data["email"]
-        settings.API_ACCESS_MANAGER_EMAIL = data["email"]
-        settings.BUGS_EMAIL = data["email"]
-        settings.BULK_EMAIL_DEFAULT_FROM_EMAIL = data["email"]
-        settings.FEEDBACK_SUBMISSION_EMAIL =data["email"]
+    try:
+        import json
+        import os
+        import sys
+        filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "email.json"])
+        with open(filet_of_settings_config, 'r') as data_file:
+            from django.conf import settings
+            data = json.loads(data_file.read())
+            settings.EMAIL_HOST = data['host']
+            settings.EMAIL_HOST_USER = data['user']
+            settings.EMAIL_HOST_PASSWORD = data['password']
+            settings.EMAIL_USE_TLS = data["tsl"]
+            settings.EMAIL_PORT = data["port"]
+            settings.EMAIL_FILE_PATH = data["path"]
+            settings.SERVER_EMAIL = data["email"]
+            settings.DEFAULT_FROM_EMAIL =data["email"]
+            settings.CONTACT_EMAIL = data["contact_email"]
+            settings.API_ACCESS_FROM_EMAIL = data["email"]
+            settings.API_ACCESS_MANAGER_EMAIL = data["email"]
+            settings.BUGS_EMAIL = data["email"]
+            settings.BULK_EMAIL_DEFAULT_FROM_EMAIL = data["email"]
+            settings.FEEDBACK_SUBMISSION_EMAIL =data["email"]
+    except Exception as ex:
+        from xdj.errors import LoadConfigError
+        raise LoadConfigError(filet_of_settings_config,ex.message,ex)
+
 
 
 def load_forum_config():

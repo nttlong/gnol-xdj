@@ -1,5 +1,5 @@
 [{
-  "host": "172.16.7.63",
-  "port": 9200,
+  "host": "localhost",
+  "port": 9201,
   "use_ssl": false
 }]
