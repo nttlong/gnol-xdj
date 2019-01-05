@@ -352,6 +352,7 @@ class BaseController(object):
                         ))
                     else:
                         raise ex
+
     def render_with_template(self,model,template):
         if isinstance(model,Model):
             from django.http import HttpResponse
