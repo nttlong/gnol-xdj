@@ -241,9 +241,35 @@ class __controller_wrapper__(object):
                         def do_rendert(model):
                             return self.obj.owner.render_with_template(model, self.obj.template)
                         self.obj.render = do_rendert
-                        if hasattr(self.obj,"on_get"):
-                            return  self.obj.on_get(model)
-                        return self.obj.owner.render_with_template(model,self.obj.template)
+                        if request.method == "GET":
+                            if hasattr(self.obj,"on_get"):
+                                return  self.obj.on_get(model)
+                            else:
+                                return self.obj.owner.render_with_template(model,self.obj.template)
+                        else:
+                            if request.META.has_key("HTTP_AJAX_POST"):
+                                exec_method = request.META["HTTP_AJAX_POST"]
+                                try:
+                                    from xdj import JSON
+                                    from django.http import HttpResponse
+                                    model.post_data.__dict__.update(JSON.from_json(request.body))
+                                    method = getattr(self.obj, exec_method)
+                                    ret = method(model)
+                                    json_data = JSON.to_json(ret)
+                                    return HttpResponse(json_data, content_type="application/json")
+                                except AttributeError as ex:
+                                    if not hasattr(self.obj,exec_method):
+                                        import inspect
+                                        code_file = inspect.getfile(self.obj.__class__)
+                                        raise Exception("{0} was not found in {1}".format(
+                                            exec_method,
+                                            code_file
+                                        ))
+                                    else:
+                                        raise ex
+
+
+
                 item.exec_request_get=cls_exec_request(item).exec_request_get
 
 
@@ -318,11 +344,14 @@ class BaseController(object):
                     json_data = JSON.to_json(ret)
                     return HttpResponse(json_data, content_type="application/json")
                 except AttributeError as ex:
-                    raise Exception("{0} was not found in {1} or error '{2}'".format(
-                        request.META["HTTP_AJAX_POST"],
-                        self.on_get.im_func.func_code.co_filename,
-                        ex.message
-                    ))
+                    if not hasattr(obj,method_items[method_items.__len__()-1]):
+                        raise Exception("{0} was not found in {1} or error '{2}'".format(
+                            request.META["HTTP_AJAX_POST"],
+                            self.on_get.im_func.func_code.co_filename,
+                            ex.message
+                        ))
+                    else:
+                        raise ex
     def render_with_template(self,model,template):
         if isinstance(model,Model):
             from django.http import HttpResponse
