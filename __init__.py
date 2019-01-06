@@ -94,9 +94,9 @@ def create(urls):
     if isinstance(urls, list):
         urls.extend(list(urlpatterns))
 
-    x = [x for x in urls if x._regex == r"^static\/(?P<path>.*)$"]
-    u = x[0]
-    print x[0].default_args["document_root"]
+    # x = [x for x in urls if x._regex == r"^static\/(?P<path>.*)$"]
+    # u = x[0]
+    # print x[0].default_args["document_root"]
     return urls
 from . controllers import BaseController,Controller
 from .page import Page

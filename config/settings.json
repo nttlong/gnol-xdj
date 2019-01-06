@@ -19,9 +19,9 @@
 
   ],
   "MAKO_MODULE_DIR": "/home/nttlong/code/edx/apps/edx/edx-platform/tmp-templates",
-  "LMS_TEMPLATE_": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-lms-templates",
-  "CMS_TEMPLATE_": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-cms-templates",
-  "MAKO_TEMPLATE_DIRS_BASE_": [
+  "LMS_TEMPLATE": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-lms-templates",
+  "CMS_TEMPLATE": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-cms-templates",
+  "MAKO_TEMPLATE_DIRS_BASE": [
     "/home/nttlong/code/edx/apps/edx/edx-platform/common/templates",
     "/home/nttlong/code/edx/apps/edx/edx-platform/common/djangoapps/pipeline_mako/templates",
     "/home/nttlong/code/edx/apps/edx/edx-platform/common/static",
