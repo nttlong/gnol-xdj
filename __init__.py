@@ -93,17 +93,23 @@ def create(urls):
 
     if isinstance(urls, list):
         urls.extend(list(urlpatterns))
+
+    x = [x for x in urls if x._regex == r"^static\/(?P<path>.*)$"]
+    u = x[0]
+    print x[0].default_args["document_root"]
     return urls
 from . controllers import BaseController,Controller
 from .page import Page
 
-def register_INSTALLED_APPS():
+def register_INSTALLED_APPS(for_lms):
     from django.conf import settings
     if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
         settings.INSTALLED_APPS.append("xdj_models.models")
     try:
+
+        load_settings(for_lms)
         load_config()
-        load_settings()
+
         load_email_settings()
         load_feature_settings()
         load_elastic_search_config()
@@ -356,7 +362,8 @@ def load_config():
         settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["password"] = data["mongo"]["password"]
         settings.MODULESTORE["default"]["OPTIONS"]["stores"][1]["DOC_STORE_CONFIG"]["port"] = data["mongo"]["port"]
 
-def load_settings():
+def load_settings(for_lms):
+    from django.conf import settings
     import json
     import os
     import sys
@@ -366,11 +373,35 @@ def load_settings():
 
     filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "settings.json"])
     with open(filet_of_settings_config, 'r') as data_file:
-        from django.conf import settings
+
         data = json.loads(data_file.read())
         logger.info(data)
         for k,v in data.items():
             setattr(settings,k,v)
+        if data.has_key("MAKO_TEMPLATE_DIRS_BASE"):
+            settings.TEMPLATES[0]['DIRS'] = data["MAKO_TEMPLATE_DIRS_BASE"]
+            settings.TEMPLATES[1]['DIRS'] = data["MAKO_TEMPLATE_DIRS_BASE"]
+
+    import path
+    if data.has_key("STATIC_ROOT"):
+        settings.STATIC_ROOT = path.path(data["STATIC_ROOT"])
+        p = [x for x in settings.STATICFILES_DIRS if
+             x.__str__()[x.__str__().__len__() - "/lms/static".__len__():] not in ["/lms/static", "/cms/static"]]
+        # p.append(settings.STATIC_ROOT)
+        settings.STATICFILES_DIRS = p
+    if for_lms:
+        if hasattr(settings,"LMS_TEMPLATE"):
+            settings.MAKO_TEMPLATE_DIRS_BASE.append(settings.LMS_TEMPLATE)
+            settings.DEFAULT_TEMPLATE_ENGINE_DIRS=settings.MAKO_TEMPLATE_DIRS_BASE
+    else:
+        if hasattr(settings,"CMS_TEMPLATE"):
+            settings.MAKO_TEMPLATE_DIRS_BASE.append(settings.CMS_TEMPLATE)
+            settings.DEFAULT_TEMPLATE_ENGINE_DIRS=settings.MAKO_TEMPLATE_DIRS_BASE
+    settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"] = settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"].replace(",/",
+                                                                                                                "/")
+
+
+
     return  None
 
 def load_email_settings():
@@ -440,6 +471,8 @@ def load_elastic_search_config():
         data = json.loads(data_file.read())
         settings.ELASTIC_SEARCH_CONFIG=data
 
+def debugTemplate(x):
+    pass
 
 
 

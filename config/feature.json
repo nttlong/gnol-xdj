@@ -24,7 +24,8 @@
   "ENABLE_VIDEO_UPLOAD_PIPELINE": false,
   "PREVIEW_LMS_BASE": "docs.bitnami.com/?page=apps&name=edx&section=how-to-configure-the-preview-button-in-studio&ignore=",
   "SHOW_FOOTER_LANGUAGE_SELECTOR": true,
-  "SHOW_HEADER_LANGUAGE_SELECTOR": true
+  "SHOW_HEADER_LANGUAGE_SELECTOR": true,
+  "ALWAYS_REDIRECT_HOMEPAGE_TO_DASHBOARD_FOR_AUTHENTICATED_USER": false
 
 
 
