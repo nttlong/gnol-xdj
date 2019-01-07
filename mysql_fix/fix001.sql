@@ -183,3 +183,15 @@ CREATE TABLE student_sociallink (
   KEY student_s_user_profile_id_7c5a1bfd4e58b3a_fk_auth_userprofile_id (user_profile_id),
   CONSTRAINT student_s_user_profile_id_7c5a1bfd4e58b3a_fk_auth_userprofile_id FOREIGN KEY (user_profile_id) REFERENCES auth_userprofile (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE courseware_dynamicupgradedeadlineconfiguration (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  change_date datetime(6) NOT NULL,
+  enabled tinyint(1) NOT NULL,
+  deadline_days smallint(5) unsigned NOT NULL,
+  changed_by_id int(11) DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY courseware_dynami_changed_by_id_77da0c73df07c112_fk_auth_user_id (changed_by_id),
+  CONSTRAINT courseware_dynamicupgrade_changed_by_id_6a450e2c_fk FOREIGN KEY (changed_by_id) REFERENCES auth_user (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

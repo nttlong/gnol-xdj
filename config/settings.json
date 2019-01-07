@@ -18,7 +18,7 @@
     "/home/nttlong/code/edx/apps/edx/edx-platform/cms/static"
 
   ],
-  "MAKO_MODULE_DIR": "/home/nttlong/code/edx/apps/edx/edx-platform/tmp-templates",
+  "MAKO_MODULE_DIR_": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-tmp-templates",
   "LMS_TEMPLATE": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-lms-templates",
   "CMS_TEMPLATE": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-cms-templates",
   "MAKO_TEMPLATE_DIRS_BASE": [
@@ -28,7 +28,9 @@
     "/home/nttlong/code/edx/apps/edx/edx-platform/openedx/core/djangoapps/cors_csrf/templates",
     "/home/nttlong/code/edx/apps/edx/edx-platform/openedx/core/djangoapps/dark_lang/templates",
     "/home/nttlong/code/edx/apps/edx/edx-platform/openedx/core/lib/license/templates",
-    "/home/nttlong/code/edx/apps/edx/edx-platform/cms/djangoapps/pipeline_js/templates"
+    "/home/nttlong/code/edx/apps/edx/edx-platform/cms/djangoapps/pipeline_js/templates",
+    "/home/nttlong/code/edx/apps/edx/edx-platform/common/lib/capa/capa/templates"
+
   ],
   "WEBPACK_LOADER_":{
     "DEFAULT": {
@@ -38,5 +40,7 @@
   },
   "WEBPACK_CONFIG_PATH_": "webpack.dev.config.js",
   "WIKI_ENABLED": true,
-  "CMS_ROOT_": "/home/nttlong/code/edx/apps/edx/edx-platform/cms/xx"
+  "CMS_ROOT_": "/home/nttlong/code/edx/apps/edx/edx-platform/cms/xx",
+  "FAVICON_PATH":"mages/favicon.ico",
+  "LMS_SEGMENT_KEY": "as103"
 }

@@ -3,6 +3,8 @@
 """
 Package này dùng để mở rộng open edx app (dạng micro app)
 """
+from webob.cachecontrol import value_property
+
 __apps__={}
 __register_apps__ = {}
 __controllers__ = []
@@ -113,6 +115,7 @@ def register_INSTALLED_APPS(for_lms):
         load_email_settings()
         load_feature_settings()
         load_elastic_search_config()
+        settings.MIDDLEWARE_CLASSES.append("xdj.middle_ware.GlobalRequestMiddleware")
     except Exception as ex:
         raise Exception(ex)
 
@@ -472,7 +475,24 @@ def load_elastic_search_config():
         settings.ELASTIC_SEARCH_CONFIG=data
 
 def debugTemplate(x):
+    from xdj.middle_ware import GlobalRequestMiddleware
+    request = GlobalRequestMiddleware.get_current_request()
     pass
+def apply_context(context):
+    def res(key,value=None):
+        if value == None:
+            value = key
+
+
+        return value
+    # context._data.update({"res": res})
+    # context.res = res
+    context.res = res
+    # context._data["res"] = res
+    # context["self"].context._data["res"] = res
+
+
+
 
 
 
