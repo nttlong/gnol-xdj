@@ -341,7 +341,12 @@ class BaseController(object):
                         obj=getattr(obj,method_items[i])
                     method_exec = getattr(obj,method_items[method_items.__len__()-1])
                     ret = method_exec(model)
+                    from util.json_request import JsonResponse
+                    if type(ret) == JsonResponse:
+                        return ret
                     json_data = JSON.to_json(ret)
+
+
                     return HttpResponse(json_data, content_type="application/json")
                 except AttributeError as ex:
                     if not hasattr(obj,method_items[method_items.__len__()-1]):
