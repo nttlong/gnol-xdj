@@ -102,16 +102,28 @@ def create(urls):
         else:
             import inspect
             print "{0} can not find replacer, will run by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
-            item.__origin_callback__ = match_url[0].callback
-            def __check_request__(request,*args,**kwargs):
-                ret = item.__view_exec__(request,*args,**kwargs)
-                if ret:
-                    return ret
-                else:
-                    return item.__origin_callback__(request,*args,**kwargs)
+            class obj_check_url():
+                def __init__(self,obj,origin_callback):
+                    self.obj = obj
+                    self.__origin_callback__ = origin_callback
+                def check_request(self,request,*args,**kwargs):
+                    ret = self.obj.__view_exec__(request, *args, **kwargs)
+                    if ret:
+                        return ret
+                    else:
+                        return self.__origin_callback__(request, *args, **kwargs)
+
+            x_obj = obj_check_url(item,match_url[0].callback)
+            # item.__origin_callback__ = x_obj.check_request
+            # def __check_request__(request,*args,**kwargs):
+            #     ret = item.__view_exec__(request,*args,**kwargs)
+            #     if ret:
+            #         return ret
+            #     else:
+            #         return item.__origin_callback__(request,*args,**kwargs)
 
 
-            match_url[0].callback = __check_request__
+            match_url[0].callback = x_obj.check_request
 
 
 
@@ -127,10 +139,10 @@ from .page import Page
 
 def register_INSTALLED_APPS(for_lms):
     from django.conf import settings
-    if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
-        settings.INSTALLED_APPS.append("xdj_models.models")
+    # if settings.INSTALLED_APPS.count("xdj_models.models") == 0:
+    #     settings.INSTALLED_APPS.append("xdj_models.models")
     try:
-
+        load_moddels()
         load_settings(for_lms)
         load_config()
 
@@ -485,6 +497,15 @@ def load_feature_settings():
             settings.FEATURES.update({
                 k:v
             })
+
+def load_moddels():
+    import json
+    import os
+    filet_of_settings_config = os.sep.join([os.path.dirname(__file__), "config", "models.json"])
+    with open(filet_of_settings_config, 'r') as data_file:
+        from django.conf import settings
+        data = json.loads(data_file.read())
+        settings.INSTALLED_APPS.extend(data)
 
 def load_elastic_search_config():
     import json
