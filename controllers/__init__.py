@@ -217,6 +217,7 @@ class __controller_wrapper__(object):
         self.controllerClass=None
         self.params = kwargs.get("params",[])
         self.replace_url = kwargs.get("replace_url",None)
+        self.check_url = kwargs.get("check_url", None)
 
     def wrapper(self,*args,**kwargs):
         import xdj
@@ -230,6 +231,7 @@ class __controller_wrapper__(object):
             self.instance.template = self.template
             self.instance.sub_pages = [v for k, v in self.controllerClass.__dict__.items() if hasattr(v, "is_sub_page")]
             self.instance.replace_url = self.replace_url
+            self.instance.check_url = self.check_url
             for item in self.instance.sub_pages:
                 item.owner=self.instance
                 class cls_exec_request(object):

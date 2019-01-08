@@ -27,10 +27,13 @@ def create(urls):
     from django.conf.urls import url
     import django
     replace_urls = []
+    check_urls = []
     for item in __controllers__:
 
         if item.instance.replace_url:
             replace_urls.append(item.instance)
+        if item.instance.check_url:
+            check_urls.append(item.instance)
 
         if not __apps__.has_key(item.instance.app_name):
             import os
@@ -91,6 +94,25 @@ def create(urls):
             import inspect
             print "{0} can not find replacer, will run by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
             match_url[0].callback = item.__view_exec__
+    for item in check_urls:
+        print "{0} will be check".format(item.check_url)
+        match_url = [x for x in urls if x.regex.pattern == item.check_url]
+        if match_url.__len__() == 0:
+            print "{0} can not find checker, will run under {1}".format(item.check_url,item.url)
+        else:
+            import inspect
+            print "{0} can not find replacer, will run by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
+            item.__origin_callback__ = match_url[0].callback
+            def __check_request__(request,*args,**kwargs):
+                ret = item.__view_exec__(request,*args,**kwargs)
+                if ret:
+                    return ret
+                else:
+                    return item.__origin_callback__(request,*args,**kwargs)
+
+
+            match_url[0].callback = __check_request__
+
 
 
     if isinstance(urls, list):
