@@ -202,3 +202,44 @@ CREATE TABLE courseware_authors (
   `course_id` VARCHAR(100) NULL,
   `created_on` DATETIME NULL,
   PRIMARY KEY (`id`));
+
+CREATE TABLE `lv_lms`.`courseware_orgs` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `OrgCode` VARCHAR(45) NOT NULL,
+  `OrgName` VARCHAR(200) NULL,
+  `OrgFName` VARCHAR(200) NULL,
+  `OrgDescription` VARCHAR(2000) NULL,
+  `CreatedOn` DATETIME NULL,
+  `CreatedBy` VARCHAR(45) NULL,
+  `ModifiedOn` DATETIME NULL,
+  `ModifiedBy` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `OrgCode_UNIQUE` (`OrgCode` ASC));
+
+ALTER TABLE `lv_lms`.`courseware_orgs`
+ADD COLUMN `OrgAddress` VARCHAR(200) NULL AFTER `ModifiedBy`,
+ADD COLUMN `RegisteredBy` INT NULL AFTER `OrgAddress`,
+ADD COLUMN `RegisteredOn` DATETIME NULL AFTER `OrgRegisteredBy`;
+
+ALTER TABLE `lv_lms`.`courseware_orgs`
+ADD COLUMN `OrgWebSite` VARCHAR(2000) NULL AFTER `OrgRegisteredOn`;
+
+CREATE TABLE `lv_lms`.`courseware_subjects` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `SubjectCode` VARCHAR(45) NOT NULL,
+  `SubjectName` VARCHAR(300) NOT NULL,
+  `SubjectFName` VARCHAR(300) NULL,
+  `SubjectDescription` VARCHAR(2000) NULL,
+  `CreatedBy` VARCHAR(45) NULL,
+  `CreatedOn` DATETIME NULL,
+  `ModifiedBy` VARCHAR(45) NULL,
+  `ModifiedOn` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `SubjectCode_UNIQUE` (`SubjectCode` ASC));
+
+CREATE TABLE `lv_lms`.`courseware_user_orgs` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `Org_id` INT NULL,
+  `User_id` INT NULL,
+  PRIMARY KEY (`id`));
+

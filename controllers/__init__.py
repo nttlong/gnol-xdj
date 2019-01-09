@@ -254,7 +254,11 @@ class __controller_wrapper__(object):
                                 try:
                                     from xdj import JSON
                                     from django.http import HttpResponse
-                                    model.post_data.__dict__.update(JSON.from_json(request.body))
+                                    from exceptions import ValueError
+                                    try:
+                                        model.post_data.__dict__.update(JSON.from_json(request.body))
+                                    except ValueError as ex:
+                                        pass
                                     method = getattr(self.obj, exec_method)
                                     ret = method(model)
                                     json_data = JSON.to_json(ret)

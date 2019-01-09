@@ -86,6 +86,11 @@ def create(urls):
     if isinstance(urls,tuple):
         urls += urlpatterns
     for item in replace_urls:
+        class cls_replacer():
+            def __init__(self,obj):
+                self.obj=obj
+            def exec_url(self,request,*args,**kwargs):
+                return self.obj.__view_exec__(request,*args,**kwargs)
         print "will replace with {0}".format(item.replace_url)
         match_url = [x for x in urls if x.regex.pattern == item.replace_url]
         if match_url.__len__() == 0:
@@ -93,7 +98,8 @@ def create(urls):
         else:
             import inspect
             print "{0} can not find replacer, will run by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
-            match_url[0].callback = item.__view_exec__
+            x= cls_replacer(item)
+            match_url[0].callback = x.exec_url
     for item in check_urls:
         print "{0} will be check".format(item.check_url)
         match_url = [x for x in urls if x.regex.pattern == item.check_url]
@@ -305,11 +311,18 @@ def load_apps(path_to_app_dir,urlpatterns=None):
 class dobject(object):
     def __init__(self,*args,**kwargs):
         def feed_data(data):
-              for k,v in data.items():
+            if isinstance(data,dobject):
+                data =data.__dict__
+            for k,v in data.items():
                     if isinstance(v,dict):
                         self.__dict__.update({
                             k:dobject(v)
                         })
+                    elif isinstance(v,dobject):
+                        self.__dict__.update({
+                            k: v
+                        })
+
                     elif isinstance(v,list):
                         lst =[]
                         for item in v:
