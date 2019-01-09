@@ -217,7 +217,7 @@ class Fields(BaseFields):
             if type(other) in [str, unicode]:
                 self.__tree__ = {
                     self.__name__: {
-                        "$regex": re.compile("^" + get_field_expr(other, True) + "$", re.IGNORECASE)
+                        "$regex": re.compile("^" + other + "$", re.IGNORECASE)
                     }
                 }
                 return self

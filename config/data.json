@@ -1,5 +1,5 @@
 {
-  "sql": {
+  "sql_": {
     "host": "127.0.0.1",
     "port": "3306",
     "user":"root",
@@ -15,7 +15,7 @@
     "name": "lv_lms",
     "engine": "django.db.backends.mysql"
   },
-  "sql_": {
+  "sql": {
     "host": "172.16.7.63",
     "port": "3306",
     "user":"root",
@@ -23,14 +23,14 @@
     "name": "lv_lms",
     "engine": "django.db.backends.mysql"
   },
-  "mongo": {
+  "mongo_1": {
     "host": "localhost",
     "port": 27018,
     "user": "bn_edx",
     "password": "fdbb816e4e",
     "name": "bitnami_edxapp"
   },
-  "mongo_1": {
+  "mongo": {
     "host": "172.16.7.63",
     "port": 27017,
     "user": "root",

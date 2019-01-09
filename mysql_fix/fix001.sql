@@ -195,3 +195,10 @@ CREATE TABLE courseware_dynamicupgradedeadlineconfiguration (
   KEY courseware_dynami_changed_by_id_77da0c73df07c112_fk_auth_user_id (changed_by_id),
   CONSTRAINT courseware_dynamicupgrade_changed_by_id_6a450e2c_fk FOREIGN KEY (changed_by_id) REFERENCES auth_user (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE courseware_authors (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NULL,
+  `course_id` VARCHAR(100) NULL,
+  `created_on` DATETIME NULL,
+  PRIMARY KEY (`id`));

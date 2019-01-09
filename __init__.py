@@ -505,7 +505,10 @@ def load_moddels():
     with open(filet_of_settings_config, 'r') as data_file:
         from django.conf import settings
         data = json.loads(data_file.read())
-        settings.INSTALLED_APPS.extend(data)
+        for item in data:
+            if settings.INSTALLED_APPS.count(item) ==0:
+                settings.INSTALLED_APPS.append(item)
+
 
 def load_elastic_search_config():
     import json
