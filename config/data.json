@@ -15,12 +15,20 @@
     "name": "lv_lms",
     "engine": "django.db.backends.mysql"
   },
-  "sql": {
+  "sql_lv": {
     "host": "172.16.7.63",
     "port": "3306",
     "user":"root",
     "password":"123456",
     "name": "lv_lms",
+    "engine": "django.db.backends.mysql"
+  },
+  "sql": {
+    "host": "172.16.7.63",
+    "port": "3306",
+    "user":"root",
+    "password":"123456",
+    "name": "lms2",
     "engine": "django.db.backends.mysql"
   },
   "mongo_1": {
@@ -30,12 +38,19 @@
     "password": "fdbb816e4e",
     "name": "bitnami_edxapp"
   },
-  "mongo": {
+  "mongo_lv": {
     "host": "172.16.7.63",
     "port": 27017,
     "user": "root",
     "password": "123456",
     "name": "lv_lms"
+  },
+  "mongo": {
+    "host": "172.16.7.63",
+    "port": 27017,
+    "user": "root",
+    "password": "123456",
+    "name": "lms2"
   },
   "mongo_": {
     "host": "172.16.7.63",
