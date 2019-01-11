@@ -39,3 +39,13 @@ CREATE TABLE `courseware_user_orgs` (
   `Org_id` INT NULL,
   `User_id` INT NULL,
   PRIMARY KEY (`id`)) DEFAULT CHARSET=utf8;
+
+CREATE TABLE `lms2`.`libraries` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NULL,
+  `name` VARCHAR(450) NULL,
+  `description` VARCHAR(2000) NULL,
+  `created_on` DATETIME NULL,
+  `key` VARCHAR(450) NULL,
+  PRIMARY KEY (`id`))
+DEFAULT CHARACTER SET = utf8;
