@@ -107,7 +107,7 @@ def create(urls):
             print "{0} can not find checker, will run under {1}".format(item.check_url,item.url)
         else:
             import inspect
-            print "{0} can not find replacer, will run by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
+            print "{0} will be check by controller {1} in {2}".format(match_url[0].regex.pattern , item,inspect.getfile(item.__class__))
             class obj_check_url():
                 def __init__(self,obj,origin_callback):
                     self.obj = obj

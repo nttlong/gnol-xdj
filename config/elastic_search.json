@@ -2,8 +2,4 @@
   "host": "localhost",
   "port": 9201,
   "use_ssl": false
-},{
-  "host": "172.16.7.63",
-  "port": 9200,
-  "use_ssl": false
 }]

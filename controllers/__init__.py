@@ -329,11 +329,19 @@ class BaseController(object):
                 return redirect(model.appUrl + "/" + self.rel_login_url)
         if request.method == 'GET':
             return self.on_get(model)
-        if request.method == 'POST':
+        else:
             if not request.META.has_key("HTTP_AJAX_POST"):
-                model.post_data.__dict__.update(
-                    request._get_post()
-                )
+                if request._get_post()!={}:
+                    model.post_data.__dict__.update(
+                        request._get_post()
+                    )
+                elif request.body and request.body != "":
+                    from xdj import JSON
+                    model.post_data.__dict__.update(
+                        JSON.from_json(request.body)
+                    )
+
+
                 return self.on_post(model)
             else:
                 try:
