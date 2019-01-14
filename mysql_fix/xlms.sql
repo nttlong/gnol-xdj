@@ -49,3 +49,24 @@ CREATE TABLE `libraries` (
   `key` VARCHAR(450) NULL,
   PRIMARY KEY (`id`))
 DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE `courseware_chapters` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NULL,
+  `course_id` VARCHAR(245) NULL,
+  `display_name` VARCHAR(245) NULL,
+  `chapter_id` VARCHAR(245) NULL,
+  `created_on` DATETIME NULL,
+  PRIMARY KEY (`id`))
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE `courseware_sequential` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `chapter_id` VARCHAR(145) NULL,
+  `course_id` VARCHAR(145) NULL,
+  `user_id` INT NULL,
+  `display_name` VARCHAR(245) NULL,
+  `sequential_id` VARCHAR(145) NULL,
+  `created_on` DATETIME NULL,
+  PRIMARY KEY (`id`))
+DEFAULT CHARACTER SET = utf8;

@@ -562,6 +562,10 @@ def apply_context(context):
 
 
 class Handler(object):
+    def from_json(self,txt):
+        from xdj import JSON
+        return JSON.from_json(txt)
+
     def __init__(self,model):
         self.model = model
 
