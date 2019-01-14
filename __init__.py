@@ -115,6 +115,16 @@ def create(urls):
                 def check_request(self,request,*args,**kwargs):
                     ret = self.obj.__view_exec__(request, *args, **kwargs)
                     if ret:
+                        if issubclass(type(ret),Handler):
+                            _ret = ret.OnBeforeHandler(ret.model)
+                            if _ret==None:
+                                _ret = self.__origin_callback__(request,*args,**kwargs)
+                                ret.model.origin_result= _ret
+                                _ret = ret.OnAfterHandler(ret.model)
+                                if _ret == None:
+                                    return ret.model.origin_result
+                                else:
+                                    return _ret
                         return ret
                     else:
                         return self.__origin_callback__(request, *args, **kwargs)
@@ -551,6 +561,9 @@ def apply_context(context):
     # context["self"].context._data["res"] = res
 
 
+class Handler(object):
+    def __init__(self,model):
+        self.model = model
 
 
 
