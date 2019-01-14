@@ -51,22 +51,57 @@ CREATE TABLE `libraries` (
 DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE `courseware_chapters` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NULL,
-  `course_id` VARCHAR(245) NULL,
+  `course_id` VARCHAR(255) NULL,
   `display_name` VARCHAR(245) NULL,
-  `chapter_id` VARCHAR(245) NULL,
+  `chapter_id` VARCHAR(255) NULL,
   `created_on` DATETIME NULL,
-  PRIMARY KEY (`id`))
+  `creator_id` VARCHAR(150) NULL,
+  `modified_on` DATETIME NULL,
+  `modifier_id` VARCHAR(150) NULL,
+  PRIMARY KEY (`chapter_id`))
 DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE `courseware_sequential` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `chapter_id` VARCHAR(145) NULL,
-  `course_id` VARCHAR(145) NULL,
-  `user_id` INT NULL,
+  `sequential_id` VARCHAR(255) NULL,
+  `chapter_id` VARCHAR(255) NULL,
+  `course_id` VARCHAR(255) NULL,
   `display_name` VARCHAR(245) NULL,
-  `sequential_id` VARCHAR(145) NULL,
   `created_on` DATETIME NULL,
-  PRIMARY KEY (`id`))
+  `creator_id` VARCHAR(150) NULL,
+  `modified_on` DATETIME NULL,
+  `modifier_id` VARCHAR(150) NULL,
+  PRIMARY KEY (`sequential_id`))
 DEFAULT CHARACTER SET = utf8;
+
+
+CREATE TABLE `courseware_vertical` (
+	`vertical_id` VARCHAR(255) NULL,
+  `sequential_id` VARCHAR(255) NULL,
+  `chapter_id` VARCHAR(255) NULL,
+  `course_id` VARCHAR(255) NULL,
+  `display_name` VARCHAR(245) NULL,
+  `created_on` DATETIME NULL,
+  `creator_id` VARCHAR(150) NULL,
+  `modified_on` DATETIME NULL,
+  `modifier_id` VARCHAR(150) NULL,
+  PRIMARY KEY (`vertical_id`))
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE `courseware_xblocks` (
+  `xblock_id` VARCHAR(255) NULL,
+  `xblock_type` VARCHAR(255) NULL,
+  `vertical_id` VARCHAR(255) NULL,
+  `course_id` VARCHAR(255) NULL,
+  `display_name` VARCHAR(245) NULL,
+  `created_on` DATETIME NULL,
+  `creator_id` VARCHAR(150) NULL,
+  `modified_on` DATETIME NULL,
+  `modifier_id` VARCHAR(150) NULL,
+  PRIMARY KEY (`xblock_id`))
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE `django_comment_common_discussionsidmapping` (
+  `course_id` varchar(255) NOT NULL,
+  `mapping` longtext NOT NULL,
+  PRIMARY KEY (`course_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
