@@ -105,3 +105,20 @@ CREATE TABLE `django_comment_common_discussionsidmapping` (
   `mapping` longtext NOT NULL,
   PRIMARY KEY (`course_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `entitlements_courseentitlementsupportdetail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created` datetime(6) NOT NULL,
+  `modified` datetime(6) NOT NULL,
+  `reason` varchar(1) NOT NULL,
+  `comments` longtext,
+  `entitlement_id` int(11) NOT NULL,
+  `support_user_id` int(11) NOT NULL,
+  `unenrolled_run_id` varchar(255) DEFAULT NULL,
+  `action` varchar(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `b0fed354de33791839d87a8d13813a8b` (`entitlement_id`),
+  KEY `entitlements_co_support_user_id_778aba40a383c157_fk_auth_user_id` (`support_user_id`),
+  CONSTRAINT `b0fed354de33791839d87a8d13813a8b` FOREIGN KEY (`entitlement_id`) REFERENCES `entitlements_courseentitlement` (`id`),
+  CONSTRAINT `entitlements_courseentitl_support_user_id_97d3095e_fk` FOREIGN KEY (`support_user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

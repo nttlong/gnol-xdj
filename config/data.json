@@ -1,4 +1,13 @@
 {
+  "sql_mssql": {
+
+        "engine": "sql_server.pyodbc",
+        "host": "172.16.0.126\\sql2k5",
+        "user": "sa",
+        "port": "1443",
+        "password": "@bc123",
+        "name": "hrp"
+  },
   "sql_": {
     "host": "127.0.0.1",
     "port": "3306",
