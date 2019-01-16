@@ -42,5 +42,7 @@
   "WIKI_ENABLED": true,
   "CMS_ROOT_": "/home/nttlong/code/edx/apps/edx/edx-platform/cms/xx",
   "FAVICON_PATH":"mages/favicon.ico",
-  "LMS_SEGMENT_KEY": "as103"
+  "LMS_SEGMENT_KEY": "as103",
+  "EMAIL_TEMPLATE_PATH": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj/email_templates",
+  "COLLECTION_TOKENS": "sys.tokens"
 }

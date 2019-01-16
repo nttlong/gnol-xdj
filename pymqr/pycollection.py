@@ -42,7 +42,13 @@ class entity():
             self.owner=owner
             self.__data__=None
             self.__insert_data__=None
-            self.__where__=where
+            if isinstance(where,list):
+                fx = {}
+                for item in where:
+                    fx.update(item.to_mongodb())
+                self.__where__ = fx
+            else:
+                self.__where__=where
         else:
             raise Exception("the owner must be 'pyquery.query'")
     def insert(self,*args,**kwargs):
@@ -190,7 +196,7 @@ class entity():
     def delete(self):
         ret = None
         try:
-            ret = self.owner.coll.detele_many (self.__where__)
+            ret = self.owner.coll.delete_many (self.__where__)
             return self.__where__,None,ret
         except Exception as ex:
             return None,ex,ret
