@@ -9,10 +9,13 @@
 
 
 """
-__lang_cache__ ={}
+__lang_cache__ = None
 __build_cached__ = None
 import threading
 lock = threading.Lock()
+def clear_language_cache():
+    global __lang_cache__
+    __lang_cache__ = {}
 class Res(object):
     """
     This class sever for language resource item getter with three level
@@ -33,6 +36,9 @@ class Res(object):
         :param value:
         :return:
         """
+        global __lang_cache__
+        if __lang_cache__ == None:
+            __lang_cache__ = {}
         from django.utils import translation
 
         if value==None:
@@ -68,6 +74,10 @@ class Res(object):
         :param value:
         :return:
         """
+
+        global __lang_cache__
+        if __lang_cache__ == None:
+            __lang_cache__ = {}
         from django.utils import translation
 
         if value == None:
@@ -103,6 +113,11 @@ class Res(object):
         :param value:
         :return:
         """
+
+        global __lang_cache__
+        if __lang_cache__ == None:
+            __lang_cache__ = {}
+
         from django.utils import translation
         if value == None:
             key = key.rstrip(" ").lstrip(" ")

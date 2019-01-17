@@ -570,7 +570,9 @@ class Handler(object):
         self.model = model
 
 
-
+def clear_language_cache():
+    from xdj.controllers import clear_language_cache
+    clear_language_cache()
 
 
 

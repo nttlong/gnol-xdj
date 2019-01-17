@@ -44,5 +44,8 @@
   "FAVICON_PATH":"mages/favicon.ico",
   "LMS_SEGMENT_KEY": "as103",
   "EMAIL_TEMPLATE_PATH": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj/email_templates",
-  "COLLECTION_TOKENS": "sys.tokens"
+  "COLLECTION_TOKENS": "sys.tokens",
+  "COLLECTION_LANGUAGE": "sys.langs",
+  "ENABLE_COURSEWARE_INDEX": true,
+  "ENABLE_LIBRARY_INDEX": true
 }
