@@ -21,7 +21,7 @@
   "MAKO_MODULE_DIR_": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-tmp-templates",
   "LMS_TEMPLATE": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-lms-templates",
   "CMS_TEMPLATE": "/home/nttlong/code/edx/apps/edx/edx-platform/xdj-gnol-cms-templates",
-  "MAKO_TEMPLATE_DIRS_BASE": [
+  "MAKO_TEMPLATE_DIRS_BASE_1": [
     "/home/nttlong/code/edx/apps/edx/edx-platform/common/templates",
     "/home/nttlong/code/edx/apps/edx/edx-platform/common/djangoapps/pipeline_mako/templates",
     "/home/nttlong/code/edx/apps/edx/edx-platform/common/static",

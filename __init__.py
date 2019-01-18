@@ -451,12 +451,20 @@ def load_settings(for_lms):
         settings.STATICFILES_DIRS = p
     if for_lms:
         if hasattr(settings,"LMS_TEMPLATE"):
+            x = os.sep.join([settings.REPO_ROOT, "lms","templates"])
+            settings.MAKO_TEMPLATE_DIRS_BASE = [p for p in settings.MAKO_TEMPLATE_DIRS_BASE if p.__str__() != x]
             settings.MAKO_TEMPLATE_DIRS_BASE.append(settings.LMS_TEMPLATE)
             settings.DEFAULT_TEMPLATE_ENGINE_DIRS=settings.MAKO_TEMPLATE_DIRS_BASE
+            settings.TEMPLATES[0]['DIRS'] = settings.MAKO_TEMPLATE_DIRS_BASE
+            settings.TEMPLATES[1]['DIRS'] = settings.MAKO_TEMPLATE_DIRS_BASE
     else:
         if hasattr(settings,"CMS_TEMPLATE"):
+            x = os.sep.join([settings.REPO_ROOT, "cms", "templates"])
+            settings.MAKO_TEMPLATE_DIRS_BASE = [p for p in settings.MAKO_TEMPLATE_DIRS_BASE if p.__str__() != x]
             settings.MAKO_TEMPLATE_DIRS_BASE.append(settings.CMS_TEMPLATE)
             settings.DEFAULT_TEMPLATE_ENGINE_DIRS=settings.MAKO_TEMPLATE_DIRS_BASE
+            settings.TEMPLATES[0]['DIRS'] = settings.MAKO_TEMPLATE_DIRS_BASE
+            settings.TEMPLATES[1]['DIRS'] = settings.MAKO_TEMPLATE_DIRS_BASE
     settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"] = settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"].replace(",/",
                                                                                                                 "/")
 
